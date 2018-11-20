@@ -1,0 +1,31 @@
+<h2 mat-dialog-title>New Category</h2>
+<mat-dialog-content>
+  <mat-form-field class="example-full-width">
+    <mat-label>Name</mat-label>
+    <input matInput type="text" placeholder="Name" [(ngModel)]="category.name" (keyup)="syncAbbreviation($event.key)">
+  </mat-form-field>
+  <mat-form-field class="example-full-width">
+    <mat-label>Abbreviation</mat-label>
+    <input matInput type="text" placeholder="Abbreviation" disabled [(ngModel)]="category.abbreviation">
+  </mat-form-field>
+  <mat-form-field>
+    <mat-select placeholder="Master Category" [(ngModel)]="category.masterCategory">
+      <mat-option [value]="INGREDIENT_CATEGORY">{{INGREDIENT_CATEGORY}}</mat-option>
+      <mat-option [value]="CONSUMABLE_CATEGORY">{{CONSUMABLE_CATEGORY}}</mat-option>
+      <mat-option [value]="FOOD_CATEGORY">{{FOOD_CATEGORY}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field>
+    <mat-select placeholder="Tax" [(ngModel)]="category.tax">
+      <mat-option *ngFor="let tax of taxes" [value]="tax.taxPercentage">{{tax.taxName}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field class="example-full-width">
+    <mat-label>Description</mat-label>
+    <textarea matInput placeholder="Description" [(ngModel)]="category.description"></textarea>
+  </mat-form-field>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button [mat-dialog-close]="false" cdkFocusInitial>Cancel</button>
+  <button mat-button [mat-dialog-close]="category">Submit</button>
+</mat-dialog-actions>

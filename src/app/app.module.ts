@@ -19,6 +19,9 @@ import { ToolbarComponent } from './components/toolbar/toolbar.component';
 import { SettingsComponent } from './settings/settings.component';
 import { SearchPipe } from './search.pipe';
 import { StockActionComponent } from './stock-action/stock-action.component';
+import {FormsModule} from '@angular/forms';
+import { NewCategoryDialogComponent } from './components/new-category-dialog/new-category-dialog.component';
+import { NewProductDialogComponent } from './components/new-product-dialog/new-product-dialog.component';
 
 @NgModule({
   declarations: [
@@ -34,14 +37,17 @@ import { StockActionComponent } from './stock-action/stock-action.component';
     ToolbarComponent,
     SettingsComponent,
     SearchPipe,
-    StockActionComponent
+    StockActionComponent,
+    NewCategoryDialogComponent,
+    NewProductDialogComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     MaterialModule,
-    HttpClientModule
+    HttpClientModule,
+    FormsModule
   ],
   providers: [
     { provide: LocationStrategy, useClass: HashLocationStrategy }

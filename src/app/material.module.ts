@@ -12,6 +12,8 @@ import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {LayoutModule} from '@angular/cdk/layout';
 import {ConfirmationDialogComponent} from './components/confirmation-dialog/confirmation-dialog.component';
+import {NewCategoryDialogComponent} from './components/new-category-dialog/new-category-dialog.component';
+import {NewProductDialogComponent} from './components/new-product-dialog/new-product-dialog.component';
 
 @NgModule({
   imports: [
@@ -63,7 +65,9 @@ import {ConfirmationDialogComponent} from './components/confirmation-dialog/conf
     MatSidenavModule
   ],
   entryComponents: [
-    ConfirmationDialogComponent
+    ConfirmationDialogComponent,
+    NewCategoryDialogComponent,
+    NewProductDialogComponent
   ],
 })
 export class MaterialModule { }

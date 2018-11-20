@@ -2,3 +2,12 @@
     margin-top: 0px;
     height: 88%;
 }
+
+.item {
+  width: 170px;
+  height: 180px;
+  margin-bottom: 20px;
+  margin-right: 20px;
+  background: #d2d6de;
+  color: #4e4e4e;
+}

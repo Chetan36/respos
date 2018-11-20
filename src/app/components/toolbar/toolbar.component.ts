@@ -18,11 +18,27 @@ export class ToolbarComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    if (!localStorage.getItem('Staff')) {
+      this.router.navigate(['/login']);
+    }
     this.inventoryOpen = false;
   }
 
   toggleInventory(): void {
     this.toggleInventoryConfirmation();
+  }
+
+  toggleInventoryConfirmation() {
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      height: '150px',
+      width: '350px',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.inventoryOpen = !this.inventoryOpen;
+      }
+    });
   }
 
   logoutUser(): void  {
@@ -39,19 +55,6 @@ export class ToolbarComponent implements OnInit {
       if (result) {
         localStorage.clear();
         this.router.navigate(['/login']);
-      }
-    });
-  }
-
-  toggleInventoryConfirmation() {
-    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-      height: '150px',
-      width: '350px',
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.inventoryOpen = !this.inventoryOpen;
       }
     });
   }

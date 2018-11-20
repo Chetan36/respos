@@ -1,5 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import {MatDialog, MatSnackBar} from '@angular/material';
+import {InventoryService} from '../services/inventoryService/inventory.service';
+import {Product} from '../model/Product';
+import {Category} from '../model/Category';
+import {ConfirmationDialogComponent} from '../components/confirmation-dialog/confirmation-dialog.component';
+import {NewCategoryDialogComponent} from '../components/new-category-dialog/new-category-dialog.component';
+import {NewProductDialogComponent} from '../components/new-product-dialog/new-product-dialog.component';
 
 @Component({
   selector: 'app-inventory',
@@ -8,23 +15,148 @@ import { Router } from '@angular/router';
 })
 export class InventoryComponent implements OnInit {
 
+  searchTextProduct: string;
+  searchTextCategory: string;
+
+  noCategory: boolean;
+  noProduct: boolean;
+
+  categories: Category[] = [];
+  products: Product[] = [];
+  tempProducts: Product[] = [];
+
+  product: Product;
+
   constructor(
-    private router: Router
+    private snackBar: MatSnackBar,
+    private router: Router,
+    private dialog: MatDialog,
+    private inventoryService: InventoryService
   ) { }
 
   ngOnInit() {
+    this.initProduct();
+    this.noCategory = true;
+    this.noProduct = true;
+    this.getAllCategories();
+    this.getAllProducts();
   }
 
-  receiveClicked(): void  {
-    this.router.navigate(['/stock/RECEIVE']);
+  initProduct(): void {
+    this.product = {
+      id: 0,
+      name: '',
+      price: 0,
+      categoryAbbreviation: '',
+      masterCategoryAbbreviation: '',
+      tax: 0,
+      stockQty: 0,
+      unitAbbreviation: '',
+      extra: false,
+      hasRecipe: false,
+      available: false
+    };
   }
 
-  transferOutClicked(): void  {
-    this.router.navigate(['/stock/TRANSFER']);
+  openErrorSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 2000,
+      panelClass: ['error-snackbar'],
+      horizontalPosition: 'center',
+      verticalPosition: 'bottom'
+    });
   }
 
-  dumpClicked(): void  {
-    this.router.navigate(['/stock/DUMP']);
+  openSuccessSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 2000,
+      panelClass: ['success-snackbar'],
+      horizontalPosition: 'center',
+      verticalPosition: 'bottom',
+    });
+  }
+
+  actionClicked(): void  {
+    this.router.navigate(['/stock']);
+  }
+
+  getAllCategories(): void  {
+    this.inventoryService.getAllCategories()
+      .subscribe(
+        response => {
+          this.noCategory = false;
+          this.categories = response;
+          console.log(this.categories);
+        },
+        error1 => {
+          console.error(error1.status);
+        }
+      );
+  }
+
+  getAllProducts(): void  {
+    this.inventoryService.getAllProducts()
+      .subscribe(
+        response => {
+          this.noProduct = false;
+          this.products = response;
+          this.tempProducts = response;
+          console.log(this.products);
+        },
+        error1 => {
+          console.error(error1.status);
+        }
+      );
+  }
+
+  categoryFilter(category: string): void  {
+    this.noProduct = true;
+    this.tempProducts = [];
+    this.products.map(x => {
+      if (x.categoryAbbreviation === category)  {
+        this.tempProducts.push(x);
+      }
+    });
+    this.noProduct = false;
+  }
+
+  allCategoryClicked(): void  {
+    this.tempProducts = this.products;
+  }
+
+  newCategoryClicked(): void  {
+    this.toggleNewCategory();
+  }
+
+  toggleNewCategory() {
+    const dialogRef = this.dialog.open(NewCategoryDialogComponent, {
+      width: '550px',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        console.log(result);
+      }
+    });
+  }
+
+  productClicked(product: Product): void  {
+    this.product = product;
+    this.toggleProduct();
+  }
+
+  toggleProduct() {
+    const dialogRef = this.dialog.open(NewProductDialogComponent, {
+      width: '550px',
+      data: this.product
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        console.log(result);
+        this.initProduct();
+      }
+    });
   }
 
 }

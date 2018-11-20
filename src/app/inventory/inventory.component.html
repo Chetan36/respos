@@ -7,52 +7,88 @@
         <h2>Inventory</h2>
       </div>
     </div>
-    <mat-card class="mat-elevation-z8" style="width: 100%; height: 100%">
+    <mat-card class="mat-elevation-z8" style="width: 100%; height: 100%; overflow: auto">
       <div class="row">
         <div class="col-md-8">
           <mat-form-field class="example-full-width">
             <mat-label>Search</mat-label>
-            <input matInput type="text" placeholder="Search">
+            <input matInput type="text" placeholder="Search" [(ngModel)]="searchTextCategory">
             <mat-icon matSuffix>search</mat-icon>
           </mat-form-field>
         </div>
         <div class="col-md-4">
           <div class="pull-right">
-            <button mat-stroked-button>Add New</button>
+            <button mat-stroked-button (click)="newCategoryClicked()">Add New</button>
           </div>
         </div>
       </div>
+      <div align="center" *ngIf="noCategory">
+        <mat-spinner></mat-spinner>
+      </div>
+      <mat-list *ngIf="!noCategory">
+        <mat-list-item style="border-bottom: 1px solid #d2d6de; text-align: center;">
+          <a routerLink="#" (click)="allCategoryClicked()">
+            All
+          </a>
+        </mat-list-item>
+        <mat-list-item style="border-bottom: 1px solid #d2d6de; text-align: center;" *ngFor="let category of categories | search: searchTextCategory">
+          <a routerLink="#" (click)="categoryFilter(category.name)">
+            {{ category.name }}
+          </a>
+        </mat-list-item>
+      </mat-list>
     </mat-card>
   </div>
 
   <div class="main-content">
-    <mat-card class="mat-elevation-z8" style="width: 100%; height: 100%">
+    <mat-card class="mat-elevation-z8" style="width: 100%; height: 100%; overflow: auto">
       <div class="row">
         <div class="col-md-4">
           <mat-form-field class="example-full-width">
             <mat-label>Search</mat-label>
-            <input matInput type="text" placeholder="Search">
+            <input matInput type="text" placeholder="Search" [(ngModel)]="searchTextProduct">
             <mat-icon matSuffix>search</mat-icon>
           </mat-form-field>
         </div>
         <div class="col-md-4"></div>
         <div class="col-md-4">
           <div class="pull-right">
-            <button mat-stroked-button style="margin-left: 10px;" (click)="receiveClicked()">
-              Receive
-            </button>
-            <button mat-stroked-button style="margin-left: 10px;" (click)="transferOutClicked()">
-              Transfer out
-            </button>
-            <button mat-stroked-button style="margin-left: 10px;" (click)="dumpClicked()">
-              Dump
+            <button mat-stroked-button style="margin-left: 10px;" (click)="actionClicked()">
+              Action
             </button>
           </div>
         </div>
       </div>
-      <div class="row">
-        <div class="col-md-12">
-
+      <div class="row" *ngIf="noProduct">
+        <div align="center">
+          <mat-spinner></mat-spinner>
+        </div>
+      </div>
+      <div class="row" *ngIf="!noProduct">
+        <div class="col-md-2" *ngFor="let product of tempProducts | search: searchTextProduct">
+          <a routerLink="#" (click)="productClicked(product)">
+            <mat-card class="mat-elevation-z20 item" style="padding: 10px;">
+              <div class="container-fluid">
+                <div class="row">
+                  <div class="container-fluid" style="height: 90px;">
+                    <div class="container-fluid" align="center">
+                      <label style="font-size: medium">{{ product.name.substr(0, 22) }}</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="container-fluid" align="center">
+                    <label style="font-size: medium">{{ product.stockQty }} {{ product.unitAbbreviation }}</label>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="container-fluid" align="center" >
+                    <label style="color: #dc3545; margin-top: 0px;" >N/A</label>
+                  </div>
+                </div>
+              </div>
+            </mat-card>
+          </a>
         </div>
       </div>
     </mat-card>
