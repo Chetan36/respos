@@ -1,0 +1,27 @@
+<mat-toolbar>
+  <span style="margin-left: 10px;">Restaurant POS</span>
+  <div style="margin-left: 30px;">
+    <button mat-button routerLink="/kiosk" style="margin-left: 10px;">
+      <mat-label>Kiosk</mat-label>
+    </button>
+    <button mat-button routerLink="/orders" style="margin-left: 10px;">
+      <mat-label>Orders</mat-label>
+    </button>
+    <button mat-button routerLink="/inventory" style="margin-left: 10px;">
+      <mat-label>Inventory</mat-label>
+    </button>
+    <button mat-button routerLink="/recipe" style="margin-left: 10px;">
+      <mat-label>Recipe</mat-label>
+    </button>
+    <button mat-button routerLink="/staff" style="margin-left: 10px;">
+      <mat-label>Staff</mat-label>
+    </button>
+    <button mat-button routerLink="/report" style="margin-left: 10px;">
+      <mat-label>Report</mat-label>
+    </button>
+  </div>
+  <span class="example-spacer"></span>
+  <button type="button" mat-button (click)="logoutUser()">
+    <mat-icon>power_settings_new</mat-icon>
+  </button>
+</mat-toolbar>
