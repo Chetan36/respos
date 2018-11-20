@@ -7,6 +7,8 @@ import {InventoryComponent} from './inventory/inventory.component';
 import {RecipeComponent} from './recipe/recipe.component';
 import {StaffComponent} from './staff/staff.component';
 import {ReportComponent} from './report/report.component';
+import { SettingsComponent } from './settings/settings.component';
+import { StockActionComponent } from './stock-action/stock-action.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -17,6 +19,8 @@ const routes: Routes = [
   { path: 'recipe', component: RecipeComponent },
   { path: 'staff', component: StaffComponent },
   { path: 'report', component: ReportComponent },
+  { path: 'settings', component: SettingsComponent },
+  { path: 'stock/:action', component: StockActionComponent },
 ];
 
 @NgModule({

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-inventory',
@@ -7,9 +8,23 @@ import { Component, OnInit } from '@angular/core';
 })
 export class InventoryComponent implements OnInit {
 
-  constructor() { }
+  constructor(
+    private router: Router
+  ) { }
 
   ngOnInit() {
+  }
+
+  receiveClicked(): void  {
+    this.router.navigate(['/stock/RECEIVE']);
+  }
+
+  transferOutClicked(): void  {
+    this.router.navigate(['/stock/TRANSFER']);
+  }
+
+  dumpClicked(): void  {
+    this.router.navigate(['/stock/DUMP']);
   }
 
 }

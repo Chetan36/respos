@@ -10,12 +10,19 @@ import {Router} from '@angular/router';
 })
 export class ToolbarComponent implements OnInit {
 
+  inventoryOpen: boolean;
+
   constructor(
     private router: Router,
     private dialog: MatDialog
   ) { }
 
   ngOnInit() {
+    this.inventoryOpen = false;
+  }
+
+  toggleInventory(): void {
+    this.toggleInventoryConfirmation();
   }
 
   logoutUser(): void  {
@@ -32,6 +39,19 @@ export class ToolbarComponent implements OnInit {
       if (result) {
         localStorage.clear();
         this.router.navigate(['/login']);
+      }
+    });
+  }
+
+  toggleInventoryConfirmation() {
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      height: '150px',
+      width: '350px',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.inventoryOpen = !this.inventoryOpen;
       }
     });
   }

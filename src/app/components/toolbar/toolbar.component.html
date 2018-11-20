@@ -19,9 +19,18 @@
     <button mat-button routerLink="/report" style="margin-left: 10px;">
       <mat-label>Report</mat-label>
     </button>
+    <button mat-button routerLink="/settings" style="margin-left: 10px;">
+      <mat-label>Settings</mat-label>
+    </button>
+    <button mat-raised-button color="primary" style="margin-left: 30px;" *ngIf="!inventoryOpen" (click)="toggleInventory()">
+      <mat-label>Open Inventory</mat-label>
+    </button>
+    <button mat-raised-button color="warn" style="margin-left: 30px;"*ngIf="inventoryOpen" (click)="toggleInventory()">
+      <mat-label>Close Inventory</mat-label>
+    </button>
   </div>
   <span class="example-spacer"></span>
   <button type="button" mat-button (click)="logoutUser()">
     <mat-icon>power_settings_new</mat-icon>
-  </button>
+  </button> 
 </mat-toolbar>

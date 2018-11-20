@@ -16,6 +16,9 @@ import { StaffComponent } from './staff/staff.component';
 import { ReportComponent } from './report/report.component';
 import {HttpClientModule} from '@angular/common/http';
 import { ToolbarComponent } from './components/toolbar/toolbar.component';
+import { SettingsComponent } from './settings/settings.component';
+import { SearchPipe } from './search.pipe';
+import { StockActionComponent } from './stock-action/stock-action.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +31,10 @@ import { ToolbarComponent } from './components/toolbar/toolbar.component';
     RecipeComponent,
     StaffComponent,
     ReportComponent,
-    ToolbarComponent
+    ToolbarComponent,
+    SettingsComponent,
+    SearchPipe,
+    StockActionComponent
   ],
   imports: [
     BrowserModule,
