@@ -1132,3 +1132,11 @@ a {
 a:hover {
   text-decoration: none;
 }
+
+.mat-slide-toggle.mat-checked:not(.mat-disabled) .mat-slide-toggle-thumb {
+  background-color: #007bff;
+}
+
+.mat-slide-toggle.mat-checked:not(.mat-disabled) .mat-slide-toggle-bar {
+  background-color: #74a3ab;
+}

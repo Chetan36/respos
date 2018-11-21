@@ -3,26 +3,44 @@
 <div style="margin-top: 75px; height: 80%">
   <div class="left-content">
     <div class="row">
-      <div class="col-md-3">
-        <h2>Action</h2>
+      <div class="col-md-6">
+        <h2>Stock Action</h2>
       </div>
     </div>
-    <mat-card class="mat-elevation-z8" style="width: 100%; height: 100%">
-      <div class="row">
-        <div class="col-md-12">
-          <div class="pull-left">
-            <h3>Type</h3>
-          </div>
-        </div>
-      </div>
+    <mat-card class="mat-elevation-z8" style="width: 100%; height: 100%; overflow: auto;">
+      <mat-list *ngIf="!noItem">
+        <mat-list-item style="border-bottom: 1px solid #d2d6de; text-align: center;">
+          <a routerLink="#" (click)="activateStockActivity(STOCK_RECEIVE)">
+            Stock Receive
+          </a>
+        </mat-list-item>
+        <mat-list-item style="border-bottom: 1px solid #d2d6de; text-align: center;">
+          <a routerLink="#" (click)="activateStockActivity(STOCK_TRANSFER_IN)">
+            Transfer In
+          </a>
+        </mat-list-item>
+        <mat-list-item style="border-bottom: 1px solid #d2d6de; text-align: center;">
+          <a routerLink="#" (click)="activateStockActivity(STOCK_TRANSFER_OUT)">
+            Transfer Out
+          </a>
+        </mat-list-item>
+        <mat-list-item style="border-bottom: 1px solid #d2d6de; text-align: center;">
+          <a routerLink="#" (click)="activateStockActivity(STOCK_DUMP)">
+            Stock Dump
+          </a>
+        </mat-list-item>
+      </mat-list>
     </mat-card>
   </div>
 
   <div class="main-content">
-    <mat-card class="mat-elevation-z8" style="width: 100%; height: 100%">
+    <mat-card class="mat-elevation-z8" style="width: 100%; height: 100%" *ngIf="stockActivity">
       <div class="row">
         <div class="col-md-2">
-          <h2>Details</h2>
+          <h2 style="color: #28a745" *ngIf="stockActivity === 102">Receive</h2>
+          <h2 style="color: #28a745" *ngIf="stockActivity === 103">Transfer In</h2>
+          <h2 style="color: #28a745" *ngIf="stockActivity === 104">Transfer Out</h2>
+          <h2 style="color: #28a745" *ngIf="stockActivity === 105">Dump</h2>
         </div>
         <div class="col-md-6">
           

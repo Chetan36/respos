@@ -4,7 +4,6 @@ import {MatDialog, MatSnackBar} from '@angular/material';
 import {InventoryService} from '../services/inventoryService/inventory.service';
 import {Product} from '../model/Product';
 import {Category} from '../model/Category';
-import {ConfirmationDialogComponent} from '../components/confirmation-dialog/confirmation-dialog.component';
 import {NewCategoryDialogComponent} from '../components/new-category-dialog/new-category-dialog.component';
 import {NewProductDialogComponent} from '../components/new-product-dialog/new-product-dialog.component';
 
@@ -81,7 +80,7 @@ export class InventoryComponent implements OnInit {
   }
 
   getAllCategories(): void  {
-    this.inventoryService.getAllCategories()
+    this.inventoryService.getAllNonFoodCategories()
       .subscribe(
         response => {
           this.noCategory = false;
@@ -89,13 +88,14 @@ export class InventoryComponent implements OnInit {
           console.log(this.categories);
         },
         error1 => {
+          this.noCategory = false;
           console.error(error1.status);
         }
       );
   }
 
   getAllProducts(): void  {
-    this.inventoryService.getAllProducts()
+    this.inventoryService.getAllNonFoodProducts()
       .subscribe(
         response => {
           this.noProduct = false;
@@ -104,6 +104,7 @@ export class InventoryComponent implements OnInit {
           console.log(this.products);
         },
         error1 => {
+          this.noProduct = false;
           console.error(error1.status);
         }
       );
@@ -132,10 +133,17 @@ export class InventoryComponent implements OnInit {
     const dialogRef = this.dialog.open(NewCategoryDialogComponent, {
       width: '550px',
     });
-
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        console.log(result);
+        this.inventoryService.addNewCategory(result)
+          .subscribe(
+            response => {
+              this.openSuccessSnackBar('Category added successfully', 'Close');
+              this.categories.push(response);
+            },
+            error1 => {
+              this.openErrorSnackBar(error1.error.message, 'Close');
+            });
       }
     });
   }
@@ -148,13 +156,24 @@ export class InventoryComponent implements OnInit {
   toggleProduct() {
     const dialogRef = this.dialog.open(NewProductDialogComponent, {
       width: '550px',
-      data: this.product
+      data: { product: this.product, categories: this.categories }
     });
-
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         console.log(result);
-        this.initProduct();
+        this.inventoryService.updateProduct(result)
+          .subscribe(
+            response => {
+              this.openSuccessSnackBar('Product updated successfully', 'Close');
+              console.log(response);
+              console.log(this.products.indexOf(this.product), '  ', this.tempProducts.indexOf(this.product));
+              this.initProduct();
+            },
+            error1 => {
+              console.error(error1);
+              this.openErrorSnackBar(error1.error.message, 'Close');
+            }
+          );
       }
     });
   }

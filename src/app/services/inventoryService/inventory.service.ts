@@ -101,6 +101,15 @@ export class InventoryService {
       );
   }
 
+  getAllNonFoodCategories(): Observable<Category[]> {
+    const url: string = `${this.inventoryURL}/category/noFood`;
+    return <Observable<Category[]>>this.http.get(url)
+      .pipe(
+        tap(categories => console.log(`Fetched non food categories`)),
+        // catchError(this.handleError('getAllCategoryAbbreviations()', []))
+      );
+  }
+
   getAllCategoryAbbreviations(): Observable<string[]> {
     const url: string = `${this.inventoryURL}/category/abbreviations`;
     return <Observable<string[]>>this.http.get(url)
