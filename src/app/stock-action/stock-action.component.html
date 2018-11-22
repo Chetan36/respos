@@ -42,15 +42,59 @@
           <h2 style="color: #28a745" *ngIf="stockActivity === 104">Transfer Out</h2>
           <h2 style="color: #28a745" *ngIf="stockActivity === 105">Dump</h2>
         </div>
-        <div class="col-md-6">
-          
+      </div>
+      <div class="row">
+        <div class="col-md-2">
+          <mat-form-field class="example-full-width" style="width: 100%" >
+            <mat-label>Product Name</mat-label>
+            <input type="text" matInput placeholder="Product Name" autofocus
+                  (keyup.enter)="getProductByName(inventoryTransaction.productName)" [matAutocomplete]="auto" name="productName"
+                   id="productName" [(ngModel)]="inventoryTransaction.productName"
+            >
+            <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+              <mat-option *ngFor="let product of products | search: inventoryTransaction.productName" [value]="product.name" (onSelectionChange)="getProductByName(product.name)">
+                {{ product.name }}
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
         </div>
-        <div class="col-md-4">
-          
+        <div class="col-md-1">
+          <mat-form-field class="example-full-width" style="width: 100%" >
+            <mat-label>Price</mat-label>
+            <input type="number" id="price" matInput placeholder="Price" [(ngModel)]="inventoryTransaction.price" (keyup.enter)="priceEntered()">
+          </mat-form-field>
+        </div>
+        <div class="col-md-1">
+          <mat-form-field class="example-full-width" style="width: 100%" >
+            <mat-label>Qty</mat-label>
+            <input type="number" id="qty" matInput placeholder="Qty" [(ngModel)]="inventoryTransaction.qty" (keyup.enter)="qtyEntered()">
+          </mat-form-field>
+        </div>
+        <div class="col-md-2">
+          <mat-form-field class="example-full-width" style="width: 100%" >
+            <mat-label>Vendor</mat-label>
+            <input type="text" id="partyName" matInput placeholder="Vendor" [(ngModel)]="inventoryTransaction.partyName" (keyup.enter)="vendorEntered()">
+          </mat-form-field>
+        </div>
+        <div class="col-md-2">
+          <mat-form-field class="example-full-width" style="width: 100%" >
+            <mat-label>GSTIN</mat-label>
+            <input type="text" id="gstinNumber" matInput placeholder="GSTIN" [(ngModel)]="inventoryTransaction.gstinNumber">
+          </mat-form-field>
+        </div>
+        <div class="col-md-2">
+          <div class="pull-right">
+            <button mat-stroked-button>
+              <mat-icon>add</mat-icon>
+            </button>
+            <button mat-stroked-button style="margin-left: 10px;">
+              <mat-icon>refresh</mat-icon>
+            </button>
+          </div>
         </div>
       </div>
       <div class="row">
-        <div class="col-md-12">
+        <div class="container-fluid">
 
         </div>
       </div>

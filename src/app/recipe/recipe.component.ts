@@ -28,6 +28,8 @@ export class RecipeComponent implements OnInit {
 
   ngOnInit() {
     this.noItem = true;
+    this.initProduct();
+    this.initRecipe();
     this.getProducts();
     this.getCategories();
   }

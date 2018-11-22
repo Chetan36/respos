@@ -28,11 +28,8 @@ export class NewProductDialogComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.dialogTitle = 'New Item';
+    this.dialogTitle = 'Item';
     this.getAllUnits();
-    if (this.data.product.name !== '') {
-      this.dialogTitle = this.data.product.name;
-    }
     this.product = this.data.product;
     this.categories = this.data.categories;
 

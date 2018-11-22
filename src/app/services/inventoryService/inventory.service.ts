@@ -358,6 +358,15 @@ export class InventoryService {
       );
   }
 
+  getProductByName(name: string): Observable<Product>  {
+    const url = `${this.inventoryURL}/product/name/${name}`;
+    return <Observable<Product>>this.http.get(url)
+      .pipe(
+        tap(products => console.log(`Fetched product by name`)),
+        // catchError(this.handleError('getAllNonFoodProducts()', []))
+      );
+  }
+
   addNewProduct(product: Product): Observable<Product>  {
     const url = `${this.inventoryURL}/product`;
     return <Observable<Product>>this.http.post(url, product, httpOptions)
