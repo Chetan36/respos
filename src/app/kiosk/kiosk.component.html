@@ -31,7 +31,7 @@
             </h1>
           </div>
           <div class="pull-right">
-            <button mat-stroked-button style="margin-right: 10px">
+            <button mat-stroked-button style="margin-right: 10px" (click)="swapTableClicked()">
               Swap Table
             </button>
             <button mat-stroked-button style="margin-right: 10px">
@@ -40,7 +40,7 @@
             <button mat-stroked-button style="margin-right: 10px">
               Settle
             </button>
-            <button mat-stroked-button color="warn" style="margin-right: 10px">
+            <button mat-stroked-button color="warn" style="margin-right: 10px" (click)="cancelOrder()">
               Cancel
             </button>
           </div>
@@ -54,36 +54,54 @@
             </h1>
           </div>
           <div class="pull-right">
-            <button mat-stroked-button style="margin-right: 10px">
+            <button mat-stroked-button style="margin-right: 10px" (click)="startOrder()">
               Start Order
             </button>
           </div>
         </div>
       </div>
-      <div class="row">
-        <div class="col-md-2">
-          <mat-form-field class="example-full-width">
+      <div class="row" *ngIf="activeTable.running">
+        <div class="col-md-3">
+          <mat-form-field class="example-full-width" style="width: 100%" >
             <mat-label>Item Name</mat-label>
-            <input matInput type="text" placeholder="Item Name">
+            <input type="text" matInput placeholder="Item Name"
+                   [matAutocomplete]="auto" name="productName"
+                   id="odProductName" [(ngModel)]="orderDetail.productName"
+            >
+            <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+              <mat-option *ngFor="let product of products | search: orderDetail.productName" [value]="product.name" (onSelectionChange)="setOrderDetail(product.name)">
+                {{ product.name }}
+              </mat-option>
+            </mat-autocomplete>
           </mat-form-field>
         </div>
-        <div class="col-md-2">
-          <mat-form-field class="example-full-width">
-            <mat-label>Category</mat-label>
-            <input matInput type="text" placeholder="Category">
+        <div class="col-md-1">
+          <mat-form-field class="example-full-width" style="width: 100%" >
+            <mat-label>Qty</mat-label>
+            <input type="number" id="odQty" matInput placeholder="Qty" [(ngModel)]="orderDetail.qty">
           </mat-form-field>
         </div>
-        <div class="col-md-2">
-          <mat-form-field class="example-full-width">
-            <mat-label>Quantity</mat-label>
-            <input matInput type="number" placeholder="Quantity">
-          </mat-form-field>
-        </div>
-        <div class="col-md-2">
+        <div class="col-md-1">
           <mat-form-field class="example-full-width">
             <mat-label>Price</mat-label>
-            <input matInput type="number" placeholder="Price">
+            <input matInput type="number" placeholder="Price" disabled [(ngModel)]="orderDetail.totalPrice">
           </mat-form-field>
+        </div>
+        <div class="col-md-3">
+          <mat-form-field class="example-full-width">
+            <mat-label>Extra</mat-label>
+            <input matInput type="text" placeholder="Extra">
+          </mat-form-field>
+        </div>
+        <div class="col-md-4">
+          <div class="pull-right">
+            <button mat-stroked-button>
+              <mat-icon>done</mat-icon>
+            </button>
+            <button mat-stroked-button style="margin-left: 10px;">
+              <mat-icon>refresh</mat-icon>
+            </button>
+          </div>
         </div>
       </div>
     </mat-card>

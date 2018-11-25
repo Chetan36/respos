@@ -49,7 +49,7 @@
             <mat-label>Product Name</mat-label>
             <input type="text" matInput placeholder="Product Name" autofocus
                   (keyup.enter)="getProductByName(inventoryTransaction.productName)" [matAutocomplete]="auto" name="productName"
-                   id="productName" [(ngModel)]="inventoryTransaction.productName"
+                   id="invProductName" [(ngModel)]="inventoryTransaction.productName"
             >
             <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
               <mat-option *ngFor="let product of products | search: inventoryTransaction.productName" [value]="product.name" (onSelectionChange)="getProductByName(product.name)">
@@ -70,32 +70,76 @@
             <input type="number" id="qty" matInput placeholder="Qty" [(ngModel)]="inventoryTransaction.qty" (keyup.enter)="qtyEntered()">
           </mat-form-field>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-2" *ngIf="stockActivity !== STOCK_DUMP">
           <mat-form-field class="example-full-width" style="width: 100%" >
-            <mat-label>Vendor</mat-label>
-            <input type="text" id="partyName" matInput placeholder="Vendor" [(ngModel)]="inventoryTransaction.partyName" (keyup.enter)="vendorEntered()">
+            <mat-label>Party Name</mat-label>
+            <input type="text" matInput placeholder="Party Name"
+                   (keyup.enter)="vendorEntered()" [matAutocomplete]="auto" name="partyName"
+                   id="partyName" [(ngModel)]="inventoryTransaction.partyName"
+            >
+            <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+              <mat-option *ngFor="let vendor of vendors | search: inventoryTransaction.partyName" [value]="vendor.partyName" (onSelectionChange)="setGstinByVendor(vendor)">
+                {{ vendor.partyName }}
+              </mat-option>
+            </mat-autocomplete>
           </mat-form-field>
         </div>
-        <div class="col-md-2">
-          <mat-form-field class="example-full-width" style="width: 100%" >
+        <div class="col-md-2" *ngIf="stockActivity !== STOCK_DUMP">
+          <mat-form-field class="example-full-width" style="width: 100%">
             <mat-label>GSTIN</mat-label>
             <input type="text" id="gstinNumber" matInput placeholder="GSTIN" [(ngModel)]="inventoryTransaction.gstinNumber">
           </mat-form-field>
         </div>
+        <div class="col-md-2" *ngIf="stockActivity === STOCK_DUMP">
+          <mat-form-field class="example-full-width" style="width: 100%">
+            <mat-label>Reason</mat-label>
+            <input type="text" id="reason" matInput placeholder="Reason" [(ngModel)]="inventoryTransaction.reason">
+          </mat-form-field>
+        </div>
         <div class="col-md-2">
           <div class="pull-right">
-            <button mat-stroked-button>
-              <mat-icon>add</mat-icon>
+            <button mat-stroked-button (click)="addInventoryTransaction()" [disabled]="transactionProcessing">
+              <mat-icon>done</mat-icon>
             </button>
-            <button mat-stroked-button style="margin-left: 10px;">
+            <button mat-stroked-button style="margin-left: 10px;" (click)="resetInventoryTransaction" [disabled]="transactionProcessing">
               <mat-icon>refresh</mat-icon>
             </button>
           </div>
         </div>
       </div>
-      <div class="row">
-        <div class="container-fluid">
+      <div class="row" style="margin: 30px;">
+        <div class="col-md-12 mat-elevation-z8" style="width: 100%">
+          <table mat-table [dataSource]="inventoryTransactionDataSource" style="width: 100%">
 
+            <ng-container matColumnDef="productName">
+              <th mat-header-cell *matHeaderCellDef style="width: 25%; font-size: large"> Product Name </th>
+              <td mat-cell *matCellDef="let element"> {{ element.productName }} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="action">
+              <th mat-header-cell *matHeaderCellDef style="width: 25%; font-size: large"> Action </th>
+              <td mat-cell *matCellDef="let element">
+                <label *ngIf="element.activityCode === STOCK_RECEIVE"> Stock Receive </label>
+                <label *ngIf="element.activityCode === STOCK_TRANSFER_IN"> Transfer In </label>
+                <label *ngIf="element.activityCode === STOCK_TRANSFER_OUT"> Transfer Out </label>
+                <label *ngIf="element.activityCode === STOCK_DUMP"> Stock Dump </label>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="price">
+              <th mat-header-cell *matHeaderCellDef style="width: 25%; font-size: large"> Price </th>
+              <td mat-cell *matCellDef="let element"> {{element.price }} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="quantity">
+              <th mat-header-cell *matHeaderCellDef style="width: 25%; font-size: large"> Quantity </th>
+              <td mat-cell *matCellDef="let element"> {{element.qty }} </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+          </table>
         </div>
       </div>
     </mat-card>

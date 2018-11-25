@@ -10,6 +10,8 @@ import {OrderDetail} from '../../Model/OrderDetail';
 import {SalesReport} from '../../Model/SalesReport';
 import {ReportRequest} from '../../Model/ReportRequest';
 import {ModifyOrder} from '../../Model/ModifyOrder';
+import {OrderStart} from '../../model/OrderStart';
+import {RestaurantTable} from '../../model/RestaurantTable';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -57,11 +59,47 @@ export class OrderService {
       );
   }
 
+  getOrderByTable(tableNumber: number): Observable<Order> {
+    const url = `${this.orderURL}/table/${tableNumber}`;
+    return <Observable<Order>> this.http.get(url)
+      .pipe(
+        tap(orders => console.log(`Fetched order by id`)),
+        // catchError(this.handleError('getOrderById()', []))
+      );
+  }
+
   getOrderDetailsById(id: number): Observable<OrderDetail[]> {
     const url = `${this.orderURL}/id/${id}/details`;
     return <Observable<OrderDetail[]>> this.http.get(url)
       .pipe(
         tap(orders => console.log(`Fetched order details by id`)),
+        // catchError(this.handleError('getOrderDetailsById()', []))
+      );
+  }
+
+  startOrder(tableNumber: number): Observable<OrderStart> {
+    const url = `${this.orderURL}/start/${tableNumber}`;
+    return <Observable<OrderStart>> this.http.get(url)
+      .pipe(
+        tap(orderStart => console.log(`Started order`)),
+        // catchError(this.handleError('getOrderDetailsById()', []))
+      );
+  }
+
+  swapTable(fromTable: number, toTable: number): Observable<RestaurantTable>  {
+    const url = `${this.orderURL}/swap/${fromTable}/${toTable}`;
+    return <Observable<RestaurantTable>> this.http.get(url)
+      .pipe(
+        tap(table => console.log(`Swapped order table`)),
+        // catchError(this.handleError('getOrderDetailsById()', []))
+      );
+  }
+
+  cancelOrder(tableNumber: number): Observable<RestaurantTable> {
+    const url = `${this.orderURL}/cancel/${tableNumber}`;
+    return <Observable<RestaurantTable>> this.http.get(url)
+      .pipe(
+        tap(orderStart => console.log(`Started order`)),
         // catchError(this.handleError('getOrderDetailsById()', []))
       );
   }
@@ -117,15 +155,6 @@ export class OrderService {
       .pipe(
         tap(status => console.log(`Settle by card attempted`)),
         // catchError(this.handleError('settleByCard()', []))
-      );
-  }
-
-  cancelOrder(orderId: number): Observable<Order[]> {
-    const url = `${this.orderURL}/cancel/${orderId}`;
-    return <Observable<Order[]>> this.http.put(url, httpOptions)
-      .pipe(
-        tap(order => console.log(`Cancel order attempted`)),
-        // catchError(this.handleError('cancelOrder()', []))
       );
   }
 

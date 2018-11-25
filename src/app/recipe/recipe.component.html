@@ -18,7 +18,7 @@
         </div>
         <div class="col-md-4">
           <div class="pull-right">
-            <button mat-stroked-button>Add New</button>
+            <!--<button mat-stroked-button>Add New</button>-->
           </div>
         </div>
       </div>
@@ -35,27 +35,95 @@
     </mat-card>
   </div>
 
-  <div class="main-content">
+  <div class="main-content" *ngIf="recipe.product">
     <mat-card class="mat-elevation-z8" style="width: 100%; height: 100%">
       <div class="row">
-        <div class="col-md-8">
-          <mat-form-field class="example-full-width">
-            <mat-label>Search</mat-label>
-            <input matInput type="text" placeholder="Search">
-            <mat-icon matSuffix>search</mat-icon>
+        <div class="col-md-6">
+          <h2 style="color: #28a745">{{ recipe.product.name }}</h2>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-3">
+          <mat-form-field>
+            <mat-select id="rcpType" [(value)]="selectedType" (selectionChange)="getRecipeProducts()">
+              <mat-option value="INGREDIENT">Ingredient</mat-option>
+              <mat-option value="CONSUMABLE">Consumable</mat-option>
+              <mat-option value="EXTRA">Extra</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col-md-3">
+          <mat-form-field class="example-full-width" style="width: 100%" >
+            <mat-label>Item Name</mat-label>
+            <input type="text" matInput placeholder="Item Name"
+                   (keyup.enter)="setRecipeAppropriates(recipe.name)" [matAutocomplete]="auto" name="productName"
+                   id="rcpProductName" [(ngModel)]="recipe.name"
+            >
+            <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+              <mat-option *ngFor="let product of recipeProducts | search: recipe.name" [value]="product.name" (onSelectionChange)="setRecipeAppropriates(product.name)">
+                {{ product.name }}
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+        </div>
+        <div class="col-md-1">
+          <mat-form-field class="example-full-width" style="width: 100%" >
+            <mat-label>Qty</mat-label>
+            <input type="number" id="qty" matInput placeholder="Qty" [(ngModel)]="recipe.qty" (keyup.enter)="addRecipe()">
+          </mat-form-field>
+        </div>
+        <div class="col-md-1">
+          <mat-form-field class="example-full-width" style="width: 100%" >
+            <mat-label>UOM</mat-label>
+            <input type="text" id="uom" name="unitAbbreviation" matInput placeholder="UOM" disabled [(ngModel)]="recipe.unitAbbreviation">
           </mat-form-field>
         </div>
         <div class="col-md-4">
           <div class="pull-right">
+            <button mat-stroked-button (click)="addRecipe()">
+              <mat-icon>done</mat-icon>
+            </button>
             <button mat-stroked-button style="margin-left: 10px;">
-              Add
+              <mat-icon>refresh</mat-icon>
             </button>
           </div>
         </div>
       </div>
-      <div class="row">
-        <div class="col-md-12">
+      <div class="row" style="margin: 30px;">
+        <div class="container-fluid mat-elevation-z8" style="width: 100%">
+          <table mat-table [dataSource]="recipeItemDataSource" style="width: 100%">
 
+            <ng-container matColumnDef="type">
+              <th mat-header-cell *matHeaderCellDef style="width: 30%; font-size: medium"> Type </th>
+              <td mat-cell *matCellDef="let element">
+                <label *ngIf="element.extra">EXTRA</label>
+                <label *ngIf="!element.extra">{{ element.masterCategory }}</label>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="item">
+              <th mat-header-cell *matHeaderCellDef style="width: 30%; font-size: medium"> Item </th>
+              <td mat-cell *matCellDef="let element"> {{ element.name }} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="quantity">
+              <th mat-header-cell *matHeaderCellDef style="width: 20%; font-size: medium"> Quantity </th>
+              <td mat-cell *matCellDef="let element"> {{ element.qty }} {{ element.unitAbbreviation }} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="action">
+              <th mat-header-cell *matHeaderCellDef style="width: 20%; font-size: medium"> Action </th>
+              <td mat-cell *matCellDef="let element">
+                <button mat-icon-button>
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+          </table>
         </div>
       </div>
     </mat-card>

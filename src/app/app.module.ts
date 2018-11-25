@@ -22,6 +22,7 @@ import { StockActionComponent } from './stock-action/stock-action.component';
 import {FormsModule} from '@angular/forms';
 import { NewCategoryDialogComponent } from './components/new-category-dialog/new-category-dialog.component';
 import { NewProductDialogComponent } from './components/new-product-dialog/new-product-dialog.component';
+import { SwapTableDialogComponent } from './components/swap-table-dialog/swap-table-dialog.component';
 
 @NgModule({
   declarations: [
@@ -40,6 +41,7 @@ import { NewProductDialogComponent } from './components/new-product-dialog/new-p
     StockActionComponent,
     NewCategoryDialogComponent,
     NewProductDialogComponent,
+    SwapTableDialogComponent,
   ],
   imports: [
     BrowserModule,

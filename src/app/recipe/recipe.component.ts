@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {Product} from '../model/Product';
 import {InventoryService} from '../services/inventoryService/inventory.service';
 import {Recipe} from '../model/Recipe';
-import {MatSnackBar} from '@angular/material';
+import {MatSnackBar, MatTableDataSource} from '@angular/material';
 import {Category} from '../model/Category';
 
 @Component({
@@ -16,7 +16,13 @@ export class RecipeComponent implements OnInit {
   categories: Category[] = [];
   product: Product;
 
+  selectedType: string;
+
   recipe: Recipe;
+  recipeItems: Recipe[];
+  recipeItemDataSource: MatTableDataSource<Recipe>;
+  displayedColumns: string[];
+  recipeProducts: Product[];
 
   noItem: boolean;
   searchText: string;
@@ -28,10 +34,16 @@ export class RecipeComponent implements OnInit {
 
   ngOnInit() {
     this.noItem = true;
+    this.recipeItems = [];
+    this.recipeProducts = [];
+    this.recipeItemDataSource = new MatTableDataSource(this.recipeItems);
     this.initProduct();
     this.initRecipe();
     this.getProducts();
     this.getCategories();
+    this.selectedType = 'INGREDIENT';
+    this.getRecipeProducts();
+    this.displayedColumns = ['type', 'item', 'quantity', 'action'];
   }
 
   initProduct(): void {
@@ -110,8 +122,109 @@ export class RecipeComponent implements OnInit {
       );
   }
 
+  getRecipeProducts(): void {
+    this.recipeProducts = [];
+    if (this.selectedType === 'INGREDIENT') {
+      this.getIngredientProducts();
+    } else if (this.selectedType === 'CONSUMABLE')  {
+      this.getConsumableProducts();
+    } else if (this.selectedType === 'EXTRA')  {
+      this.getExtraProducts();
+    }
+  }
+
+  setRecipeAppropriates(name: string): void {
+    const item: Product = this.recipeProducts.find(x => x.name === name.toUpperCase());
+    this.recipe.itemId = item.id;
+    this.recipe.unitAbbreviation = item.unitAbbreviation;
+    this.recipe.price = item.price;
+    this.recipe.masterCategory = item.masterCategoryAbbreviation;
+    this.recipe.tax = item.tax;
+    if (this.selectedType === 'EXTRA')  {
+      this.recipe.extra = true;
+    } else  {
+      this.recipe.extra = false;
+    }
+    document.getElementById('qty').focus();
+  }
+
+  getIngredientProducts(): void {
+    this.inventoryService.getIngredientProducts()
+      .subscribe(
+        response => {
+          this.recipeProducts = response;
+          console.log(this.recipeProducts);
+        },
+        error1 => {
+          console.error(error1);
+        }
+      );
+  }
+
+  getConsumableProducts(): void {
+    this.inventoryService.getConsumableProducts()
+      .subscribe(
+        response => {
+          this.recipeProducts = response;
+          console.log(this.recipeProducts);
+        },
+        error1 => {
+          console.error(error1);
+        }
+      );
+  }
+
+  getExtraProducts(): void {
+    this.inventoryService.getAllExtraProducts()
+      .subscribe(
+        response => {
+          this.recipeProducts = response;
+          console.log(this.recipeProducts);
+        },
+        error1 => {
+          console.error(error1);
+        }
+      );
+  }
+
+  getCompleteRecipe(productId: number)  {
+    this.inventoryService.getRecipeByProductId(productId)
+      .subscribe(
+        response => {
+          this.recipeItems = response;
+          this.recipeItemDataSource = new MatTableDataSource<Recipe>(this.recipeItems);
+        },
+        error1 => {
+          console.error(error1);
+        }
+      );
+  }
+
   activateRecipe(product: Product): void {
+    this.recipeItems = [];
     this.product = product;
+    this.recipe.product = this.product;
+    this.getCompleteRecipe(this.product.id);
+  }
+
+  addRecipe(): void {
+    this.recipe.price = this.recipe.price * this.recipe.qty;
+    this.inventoryService.addRecipe(this.recipe)
+      .subscribe(
+        response => {
+          this.recipeItems.push(response);
+          this.recipeItemDataSource = new MatTableDataSource<Recipe>(this.recipeItems);
+          this.initRecipe();
+          this.recipe.product = this.product;
+          this.openSuccessSnackBar('Item added to recipe', 'Close');
+          document.getElementById('rcpType').focus();
+          console.log(response);
+        },
+        error1 => {
+          console.error(error1);
+          this.openSuccessSnackBar('Could not add item to recipe', 'Close');
+        }
+      );
   }
 
 }
