@@ -28,7 +28,6 @@ export class KioskComponent implements OnInit {
   orderDetail: OrderDetail;
   orderDetails: OrderDetail[];
   extraRecipeItems: Recipe[];
-  extraItems: ExtraItem[];
   addOrderDetail: AddOrderDetail;
 
   constructor(
@@ -45,10 +44,9 @@ export class KioskComponent implements OnInit {
     this.getRestaurantTables();
     this.getProducts();
     this.initActiveTable();
-    this.initOrderDetail();
+    // this.initOrderDetail();
     this.initAddOrderDetail();
     this.extraRecipeItems = [];
-    this.extraItems = [];
     this.orderDetails = [];
   }
 
@@ -70,17 +68,20 @@ export class KioskComponent implements OnInit {
     });
   }
 
-  initOrderDetail(): void {
-    this.orderDetail = {
-      id: null,
-      productName: '',
-      basePrice: 0,
-      itemPrice: 0,
-      qty: 0,
-      tax: 0,
-      totalPrice: 0,
-      unit: '',
-      order: null
+  initAddOrderDetail(): void {
+    this.addOrderDetail = {
+      orderDetail: {
+        id: null,
+        productName: '',
+        basePrice: 0,
+        itemPrice: 0,
+        qty: 0,
+        tax: 0,
+        totalPrice: 0,
+        unit: '',
+        order: null
+      },
+      extraItems: []
     };
   }
 
@@ -90,13 +91,6 @@ export class KioskComponent implements OnInit {
       tableNumber: null,
       running: false,
       orderId: null
-    };
-  }
-
-  initAddOrderDetail(): void  {
-    this.addOrderDetail = {
-      orderDetail: null,
-      extraItems: []
     };
   }
 
@@ -148,9 +142,7 @@ export class KioskComponent implements OnInit {
         response => {
           this.activeTable = response;
           this.restaurantTables[this.restaurantTables.findIndex(x => x.tableNumber === response.tableNumber)] = response;
-          this.initOrderDetail();
           this.initAddOrderDetail();
-          this.extraItems = [];
           this.openSuccessSnackBar('Order cancelled successfully', 'Close');
         },
         error1 => {
@@ -196,9 +188,7 @@ export class KioskComponent implements OnInit {
   }
 
   activateTable(table: RestaurantTable): void {
-    this.initOrderDetail();
     this.initAddOrderDetail();
-    this.extraItems = [];
     this.activeTable = table;
     if (table.running)  {
       this.orderService.getOrderByTable(table.tableNumber)
@@ -227,14 +217,14 @@ export class KioskComponent implements OnInit {
   }
 
   setOrderDetail(productName: string): void  {
-    this.extraItems = [];
+    this.addOrderDetail.extraItems = [];
     const product = this.products[this.products.findIndex(x => x.name === productName)];
-    this.orderDetail.order = this.activeOrder;
-    this.orderDetail.unit = product.unitAbbreviation;
-    this.orderDetail.qty = 1;
-    this.orderDetail.itemPrice = product.price;
-    this.orderDetail.totalPrice = product.price;
-    this.orderDetail.tax = product.tax;
+    this.addOrderDetail.orderDetail.order = this.activeOrder;
+    this.addOrderDetail.orderDetail.unit = product.unitAbbreviation;
+    this.addOrderDetail.orderDetail.qty = 1;
+    this.addOrderDetail.orderDetail.itemPrice = product.price;
+    this.addOrderDetail.orderDetail.totalPrice = product.price;
+    this.addOrderDetail.orderDetail.tax = product.tax;
     // console.log(this.orderDetail);
     this.getExtraItems(product);
     document.getElementById('odQty').focus();
@@ -255,7 +245,7 @@ export class KioskComponent implements OnInit {
               checked: false,
               available: item.available
             };
-            this.extraItems.push(extraItem);
+            this.addOrderDetail.extraItems.push(extraItem);
           });
         },
         error1 => {

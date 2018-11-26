@@ -66,10 +66,10 @@
             <mat-label>Item Name</mat-label>
             <input type="text" matInput placeholder="Item Name"
                    [matAutocomplete]="auto" name="productName"
-                   id="odProductName" [(ngModel)]="orderDetail.productName"
+                   id="odProductName" [(ngModel)]="addOrderDetail.orderDetail.productName"
             >
             <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
-              <mat-option *ngFor="let product of products | search: orderDetail.productName" [value]="product.name" (onSelectionChange)="setOrderDetail(product.name)">
+              <mat-option *ngFor="let product of products | search: addOrderDetail.orderDetail.productName" [value]="product.name" (onSelectionChange)="setOrderDetail(product.name)">
                 {{ product.name }}
               </mat-option>
             </mat-autocomplete>
@@ -78,13 +78,13 @@
         <div class="col-md-1">
           <mat-form-field class="example-full-width" style="width: 100%" >
             <mat-label>Qty</mat-label>
-            <input type="number" id="odQty" matInput placeholder="Qty" [(ngModel)]="orderDetail.qty">
+            <input type="number" id="odQty" matInput placeholder="Qty" [(ngModel)]="addOrderDetail.orderDetail.qty">
           </mat-form-field>
         </div>
         <div class="col-md-1">
           <mat-form-field class="example-full-width">
             <mat-label>Price</mat-label>
-            <input matInput type="number" placeholder="Price" disabled [(ngModel)]="orderDetail.totalPrice">
+            <input matInput type="number" placeholder="Price" disabled [(ngModel)]="addOrderDetail.orderDetail.totalPrice">
           </mat-form-field>
         </div>
         <div class="col-md-3">
