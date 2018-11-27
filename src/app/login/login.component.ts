@@ -5,6 +5,8 @@ import {Staff} from '../model/Staff';
 import {LoginCredentials} from '../model/LoginCredentials';
 import {StaffService} from '../services/staffService/staff.service';
 import {MasterDataService} from '../services/masterDataService/master-data.service';
+import {ProfileService} from '../services/profileService/profile.service';
+import {SettingsService} from '../services/settingsService/settings.service';
 
 @Component({
   selector: 'app-login',
@@ -20,7 +22,8 @@ export class LoginComponent implements OnInit {
     private router: Router,
     private snackBar: MatSnackBar,
     private staffService: StaffService,
-    private masterDataService: MasterDataService
+    private profileService: ProfileService,
+    private settingsService: SettingsService
   ) { }
 
   openErrorSnackBar(message: string, action: string) {
@@ -98,7 +101,7 @@ export class LoginComponent implements OnInit {
   }
 
   getRestaurantDetails(): void  {
-    this.masterDataService.getRestaurantDetails()
+    this.profileService.getRestaurantDetails()
       .subscribe(
         response => {
           localStorage.setItem('Restaurant', JSON.stringify(response));
@@ -111,7 +114,7 @@ export class LoginComponent implements OnInit {
   }
 
   getRestaurantSettings(): void  {
-    this.masterDataService.getRestaurantSettings()
+    this.settingsService.getRestaurantSettings()
       .subscribe(
         response => {
           localStorage.setItem('Settings', JSON.stringify(response));

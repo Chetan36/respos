@@ -12,6 +12,7 @@ import {OrderDetail} from '../model/OrderDetail';
 import {ExtraItem} from '../model/ExtraItem';
 import {AddOrderDetail} from '../model/AddOrderDetail';
 import {Recipe} from '../model/Recipe';
+import {RestaurantService} from '../services/restaurantService/restaurant.service';
 
 @Component({
   selector: 'app-kiosk',
@@ -31,7 +32,7 @@ export class KioskComponent implements OnInit {
   addOrderDetail: AddOrderDetail;
 
   constructor(
-    private masterDataService: MasterDataService,
+    private restaurantService: RestaurantService,
     private orderService: OrderService,
     private inventoryService: InventoryService,
     private snackBar: MatSnackBar,
@@ -95,7 +96,7 @@ export class KioskComponent implements OnInit {
   }
 
   getRestaurantTables(): void {
-    this.masterDataService.getRestaurantTables()
+    this.restaurantService.getRestaurantTables()
       .subscribe(
         response => {
           this.restaurantTables = response;
@@ -121,7 +122,7 @@ export class KioskComponent implements OnInit {
   }
 
   startOrder(): void  {
-    this.orderService.startOrder(this.activeTable.tableNumber)
+    this.restaurantService.startOrder(this.activeTable.tableNumber)
       .subscribe(
         response => {
           this.activeTable = response.table;
@@ -137,7 +138,7 @@ export class KioskComponent implements OnInit {
   }
 
   cancelOrder(): void {
-    this.orderService.cancelOrder(this.activeTable.tableNumber)
+    this.restaurantService.cancelOrder(this.activeTable.tableNumber)
       .subscribe(
         response => {
           this.activeTable = response;
@@ -172,7 +173,7 @@ export class KioskComponent implements OnInit {
       this.openErrorSnackBar('Cannot swap between same tables', 'Close');
       return;
     }
-    this.orderService.swapTable(fromTable, toTable)
+    this.restaurantService.swapTable(fromTable, toTable)
       .subscribe(
         response => {
           this.activeTable = response;
@@ -191,7 +192,7 @@ export class KioskComponent implements OnInit {
     this.initAddOrderDetail();
     this.activeTable = table;
     if (table.running)  {
-      this.orderService.getOrderByTable(table.tableNumber)
+      this.orderService.getOrderById(table.orderId)
         .subscribe(
           response => {
             this.activeOrder = response;

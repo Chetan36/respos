@@ -77,33 +77,6 @@ export class OrderService {
       );
   }
 
-  startOrder(tableNumber: number): Observable<OrderStart> {
-    const url = `${this.orderURL}/start/${tableNumber}`;
-    return <Observable<OrderStart>> this.http.get(url)
-      .pipe(
-        tap(orderStart => console.log(`Started order`)),
-        // catchError(this.handleError('getOrderDetailsById()', []))
-      );
-  }
-
-  swapTable(fromTable: number, toTable: number): Observable<RestaurantTable>  {
-    const url = `${this.orderURL}/swap/${fromTable}/${toTable}`;
-    return <Observable<RestaurantTable>> this.http.get(url)
-      .pipe(
-        tap(table => console.log(`Swapped order table`)),
-        // catchError(this.handleError('getOrderDetailsById()', []))
-      );
-  }
-
-  cancelOrder(tableNumber: number): Observable<RestaurantTable> {
-    const url = `${this.orderURL}/cancel/${tableNumber}`;
-    return <Observable<RestaurantTable>> this.http.get(url)
-      .pipe(
-        tap(orderStart => console.log(`Started order`)),
-        // catchError(this.handleError('getOrderDetailsById()', []))
-      );
-  }
-
   placeDineInOrder(preOrder: PreOrder): Observable<Order> {
     const url = `${this.orderURL}/place/dineIn`;
     return <Observable<Order>> this.http.post(url, preOrder, httpOptions)
