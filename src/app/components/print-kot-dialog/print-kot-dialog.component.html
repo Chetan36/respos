@@ -1,0 +1,21 @@
+<h2 mat-dialog-title>KOT</h2>
+<mat-dialog-content>
+  <div class="row">
+    <div class="col-md-6">
+      <mat-form-field class="example-full-width">
+        <mat-label>No. of Persons</mat-label>
+        <input matInput type="number" placeholder="No. of Persons" [(ngModel)]="order.numberOfPersons" cdkFocusInitial>
+      </mat-form-field>
+    </div>
+    <div class="col-md-6">
+      <mat-form-field class="example-full-width">
+        <mat-label>Waiter Name</mat-label>
+        <input matInput type="text" placeholder="Waiter Name" [(ngModel)]="order.waiterName" (keyup.enter)="clickSubmit()">
+      </mat-form-field>
+    </div>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button [mat-dialog-close]="false" >Cancel</button>
+  <button mat-button [mat-dialog-close]="order" id="submitBtn">Submit</button>
+</mat-dialog-actions>

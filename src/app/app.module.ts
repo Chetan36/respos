@@ -24,6 +24,7 @@ import { NewCategoryDialogComponent } from './components/new-category-dialog/new
 import { NewProductDialogComponent } from './components/new-product-dialog/new-product-dialog.component';
 import { SwapTableDialogComponent } from './components/swap-table-dialog/swap-table-dialog.component';
 import { ExtraItemDialogComponent } from './components/extra-item-dialog/extra-item-dialog.component';
+import { PrintKotDialogComponent } from './components/print-kot-dialog/print-kot-dialog.component';
 
 @NgModule({
   declarations: [
@@ -44,6 +45,7 @@ import { ExtraItemDialogComponent } from './components/extra-item-dialog/extra-i
     NewProductDialogComponent,
     SwapTableDialogComponent,
     ExtraItemDialogComponent,
+    PrintKotDialogComponent,
   ],
   imports: [
     BrowserModule,

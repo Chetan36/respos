@@ -15,6 +15,8 @@ import {ConfirmationDialogComponent} from './components/confirmation-dialog/conf
 import {NewCategoryDialogComponent} from './components/new-category-dialog/new-category-dialog.component';
 import {NewProductDialogComponent} from './components/new-product-dialog/new-product-dialog.component';
 import {SwapTableDialogComponent} from './components/swap-table-dialog/swap-table-dialog.component';
+import { PrintKotDialogComponent } from './components/print-kot-dialog/print-kot-dialog.component';
+import { ExtraItemDialogComponent } from './components/extra-item-dialog/extra-item-dialog.component';
 
 @NgModule({
   imports: [
@@ -69,7 +71,9 @@ import {SwapTableDialogComponent} from './components/swap-table-dialog/swap-tabl
     ConfirmationDialogComponent,
     NewCategoryDialogComponent,
     NewProductDialogComponent,
-    SwapTableDialogComponent
+    SwapTableDialogComponent,
+    PrintKotDialogComponent,
+    ExtraItemDialogComponent
   ],
 })
 export class MaterialModule { }

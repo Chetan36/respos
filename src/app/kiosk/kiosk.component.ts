@@ -13,6 +13,7 @@ import {AddOrderDetail} from '../model/AddOrderDetail';
 import {Recipe} from '../model/Recipe';
 import {RestaurantService} from '../services/restaurantService/restaurant.service';
 import {ExtraItemDialogComponent} from '../components/extra-item-dialog/extra-item-dialog.component';
+import { PrintKotDialogComponent } from '../components/print-kot-dialog/print-kot-dialog.component';
 
 @Component({
   selector: 'app-kiosk',
@@ -321,6 +322,35 @@ export class KioskComponent implements OnInit {
           this.openErrorSnackBar(error1.error.message, 'Close');
         }
       );
+  }
+
+  saveKOTClicked(): void  {
+    if (this.activeOrder.clerkName !== '')  {
+      this.printKOT();
+    } else  {
+      this.toggleKOTDialog();
+    }
+  }
+
+  toggleKOTDialog(): void {
+    const dialogRef = this.dialog.open(PrintKotDialogComponent, {
+      width: '550px',
+      data: { order: this.activeOrder }
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.orderService.saveOrder(result)
+          .subscribe(
+            response => {
+              this.activeOrder = response;
+              this.printKOT();
+            },
+            error1 => {
+              this.openErrorSnackBar(error1.error.message, 'Close');
+            }
+          )
+      }
+    });
   }
 
   printKOT(): void  {
