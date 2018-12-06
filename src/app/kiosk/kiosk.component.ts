@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import {RestaurantTable} from '../model/RestaurantTable';
-import {MasterDataService} from '../services/masterDataService/master-data.service';
 import {OrderService} from '../services/orderService/order.service';
 import {Order} from '../model/Order';
-import {MatDialog, MatSnackBar} from '@angular/material';
+import {MatDialog, MatSnackBar, MatTableDataSource} from '@angular/material';
 import {Router} from '@angular/router';
 import {Product} from '../model/Product';
 import {InventoryService} from '../services/inventoryService/inventory.service';
@@ -13,6 +12,7 @@ import {ExtraItem} from '../model/ExtraItem';
 import {AddOrderDetail} from '../model/AddOrderDetail';
 import {Recipe} from '../model/Recipe';
 import {RestaurantService} from '../services/restaurantService/restaurant.service';
+import {ExtraItemDialogComponent} from '../components/extra-item-dialog/extra-item-dialog.component';
 
 @Component({
   selector: 'app-kiosk',
@@ -27,8 +27,12 @@ export class KioskComponent implements OnInit {
   activeTable: RestaurantTable;
   activeOrder: Order;
   orderDetail: OrderDetail;
-  orderDetails: OrderDetail[];
+  orderDetails: AddOrderDetail[];
+  currentOrderDetails: AddOrderDetail[];
+  orderDetailDataSource: MatTableDataSource<AddOrderDetail>;
+  displayedColumns: String[] = ['itemName', 'qty', 'price', 'extra', 'action'];
   extraRecipeItems: Recipe[];
+  extraItems: ExtraItem[];
   addOrderDetail: AddOrderDetail;
 
   constructor(
@@ -48,12 +52,15 @@ export class KioskComponent implements OnInit {
     // this.initOrderDetail();
     this.initAddOrderDetail();
     this.extraRecipeItems = [];
+    this.extraItems = [];
     this.orderDetails = [];
+    this.currentOrderDetails = [];
+    this.orderDetailDataSource = new MatTableDataSource<AddOrderDetail>(this.orderDetails);
   }
 
   openErrorSnackBar(message: string, action: string) {
     this.snackBar.open(message, action, {
-      duration: 2000,
+      duration: 10000,
       panelClass: ['error-snackbar'],
       horizontalPosition: 'center',
       verticalPosition: 'bottom'
@@ -80,7 +87,9 @@ export class KioskComponent implements OnInit {
         tax: 0,
         totalPrice: 0,
         unit: '',
-        order: null
+        category: '',
+        order: null,
+        complementary: false
       },
       extraItems: []
     };
@@ -210,6 +219,8 @@ export class KioskComponent implements OnInit {
       .subscribe(
         response => {
           this.orderDetails = response;
+          this.currentOrderDetails = [];
+          this.orderDetailDataSource = new MatTableDataSource<AddOrderDetail>(this.orderDetails);
         },
         error1 => {
           console.error(error1);
@@ -225,10 +236,21 @@ export class KioskComponent implements OnInit {
     this.addOrderDetail.orderDetail.qty = 1;
     this.addOrderDetail.orderDetail.itemPrice = product.price;
     this.addOrderDetail.orderDetail.totalPrice = product.price;
+    this.addOrderDetail.orderDetail.category = product.categoryAbbreviation;
     this.addOrderDetail.orderDetail.tax = product.tax;
+    this.addOrderDetail.orderDetail.complementary = false;
     // console.log(this.orderDetail);
     this.getExtraItems(product);
-    document.getElementById('odQty').focus();
+  }
+
+  resetOrderDetail(): void  {
+    this.initAddOrderDetail();
+    this.extraRecipeItems = [];
+    this.extraItems = [];
+  }
+
+  updatePrice(): void {
+    this.addOrderDetail.orderDetail.totalPrice = this.addOrderDetail.orderDetail.qty * this.addOrderDetail.orderDetail.itemPrice;
   }
 
   getExtraItems(product: Product): void {
@@ -240,19 +262,105 @@ export class KioskComponent implements OnInit {
             const extraItem: ExtraItem = {
               id: item.itemId,
               name: item.name,
-              qty: 0,
+              qty: item.qty,
               itemPrice: item.price,
               tax: item.tax,
-              checked: false,
-              available: item.available
+              basePrice: 0,
+              totalPrice: item.price,
+              orderDetail: this.addOrderDetail.orderDetail
             };
-            this.addOrderDetail.extraItems.push(extraItem);
+            this.extraItems.push(extraItem);
           });
         },
         error1 => {
           console.error(error1);
         }
       );
+  }
+
+  toggleExtraItemsDialog() {
+    const dialogRef = this.dialog.open(ExtraItemDialogComponent, {
+      width: '550px',
+      data: { extraItems: this.extraItems }
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.swapOrderTable(this.activeTable.tableNumber, result);
+      }
+    });
+  }
+
+  submitOrderDetail(): void {
+    console.log(this.addOrderDetail);
+    this.orderService.saveOrderDetail(this.addOrderDetail)
+      .subscribe(
+        response => {
+          console.log(response);
+          this.orderDetails.push(response);
+          this.currentOrderDetails.push(response);
+          this.orderDetailDataSource = new MatTableDataSource<AddOrderDetail>(this.orderDetails);
+          this.resetOrderDetail();
+        },
+        error1 => {
+          this.openErrorSnackBar(error1.error.message, 'Close');
+          this.resetOrderDetail();
+        }
+      );
+  }
+
+  removeOrderDetail(addOrderDetail: AddOrderDetail): void {
+    this.orderService.removeOrderDetail(addOrderDetail.orderDetail.id)
+      .subscribe(
+        response => {
+          this.orderDetails.splice(this.orderDetails.indexOf(response), 1);
+          this.currentOrderDetails.splice(this.orderDetails.indexOf(response), 1);
+          this.orderDetailDataSource = new MatTableDataSource<AddOrderDetail>(this.orderDetails);
+          this.resetOrderDetail();
+        },
+        error1 => {
+          this.openErrorSnackBar(error1.error.message, 'Close');
+        }
+      );
+  }
+
+  printKOT(): void  {
+    if (this.currentOrderDetails.length === 0) {
+      this.orderService.printKOT(this.addOrderDetail.orderDetail.id)
+        .subscribe(
+          response => {
+            if (response === true) {
+              this.openSuccessSnackBar('KOT successfully printed', 'Close');
+              this.currentOrderDetails = [];
+            } else  {
+              this.openErrorSnackBar('Could not print KOT', 'Close');
+            }
+          },
+          error1 => {
+            this.openErrorSnackBar(error1.error.message, 'Close');
+          }
+        );
+    } else  {
+      let orderDetails: OrderDetail[] = [];
+      this.currentOrderDetails.map(x => {
+        orderDetails.push(x.orderDetail);
+      });
+      this.orderService.printCurrentKOT(this.activeOrder.id, orderDetails)
+        .subscribe(
+          response => {
+            if (response === true) {
+              this.openSuccessSnackBar('KOT successfully printed', 'Close');
+              this.currentOrderDetails = [];
+            } else  {
+              this.openErrorSnackBar('Could not print KOT', 'Close');
+            }
+            orderDetails = null;
+          },
+          error1 => {
+            this.openErrorSnackBar(error1.error.message, 'Close');
+            orderDetails = null;
+          }
+        );
+    }
   }
 
 }

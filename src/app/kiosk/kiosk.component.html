@@ -12,7 +12,7 @@
         <div class="container-fluid" align="center">
           <h3>Tables</h3>
         </div>
-        <div class="container-fluid">
+        <div class="container" align="center" style="width: 80%; overflow: auto;">
           <button mat-stroked-button *ngFor="let table of restaurantTables" style="margin: 5px;" [ngStyle]="{ 'background': table.running? '#007bff': '' }" (click)="activateTable(table)">
             {{ table.tableNumber }}
           </button>
@@ -34,7 +34,7 @@
             <button mat-stroked-button style="margin-right: 10px" (click)="swapTableClicked()">
               Swap Table
             </button>
-            <button mat-stroked-button style="margin-right: 10px">
+            <button mat-stroked-button style="margin-right: 10px" (click)="printKOT()">
               Save KOT
             </button>
             <button mat-stroked-button style="margin-right: 10px">
@@ -78,7 +78,7 @@
         <div class="col-md-1">
           <mat-form-field class="example-full-width" style="width: 100%" >
             <mat-label>Qty</mat-label>
-            <input type="number" id="odQty" matInput placeholder="Qty" [(ngModel)]="addOrderDetail.orderDetail.qty">
+            <input type="number" id="odQty" matInput placeholder="Qty" [(ngModel)]="addOrderDetail.orderDetail.qty" (blur)="updatePrice()">
           </mat-form-field>
         </div>
         <div class="col-md-1">
@@ -88,20 +88,62 @@
           </mat-form-field>
         </div>
         <div class="col-md-3">
-          <mat-form-field class="example-full-width">
-            <mat-label>Extra</mat-label>
-            <input matInput type="text" placeholder="Extra">
+          <mat-form-field>
+            <mat-select placeholder="Extra" [(value)]="addOrderDetail.extraItems" multiple>
+              <mat-option *ngFor="let extra of extraItems" [value]="extra">{{ extra.name }}</mat-option>
+            </mat-select>
           </mat-form-field>
         </div>
         <div class="col-md-4">
           <div class="pull-right">
-            <button mat-stroked-button>
+            <button mat-stroked-button (click)="submitOrderDetail()">
               <mat-icon>done</mat-icon>
             </button>
-            <button mat-stroked-button style="margin-left: 10px;">
+            <button mat-stroked-button style="margin-left: 10px;" (click)="resetOrderDetail()">
               <mat-icon>refresh</mat-icon>
             </button>
           </div>
+        </div>
+      </div>
+      <div class="row" style="margin: 30px;" *ngIf="activeTable.running">
+        <div class="container-fluid mat-elevation-z8" style="width: 100%">
+          <table mat-table [dataSource]="orderDetailDataSource" style="width: 100%">
+
+            <ng-container matColumnDef="itemName">
+              <th mat-header-cell *matHeaderCellDef style="width: 30%; font-size: medium"> Item </th>
+              <td mat-cell *matCellDef="let element"> {{ element.orderDetail.productName }} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="qty">
+              <th mat-header-cell *matHeaderCellDef style="width: 20%; font-size: medium"> Quantity </th>
+              <td mat-cell *matCellDef="let element"> {{ element.orderDetail.qty }} {{ element.orderDetail.unit }} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="price">
+              <th mat-header-cell *matHeaderCellDef style="width: 20%; font-size: medium"> Price </th>
+              <td mat-cell *matCellDef="let element"> {{ element.orderDetail.totalPrice }} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="extra">
+              <th mat-header-cell *matHeaderCellDef style="width: 20%; font-size: medium"> Extra </th>
+              <td mat-cell *matCellDef="let element">
+                <label *ngFor="let item of element.extraItems">{{ item.name }}</label>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="action">
+              <th mat-header-cell *matHeaderCellDef style="width: 20%; font-size: medium"> Action </th>
+              <td mat-cell *matCellDef="let element">
+                <button mat-icon-button color="warn" (click)="removeOrderDetail(element)">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+          </table>
         </div>
       </div>
     </mat-card>

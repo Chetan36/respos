@@ -18,7 +18,10 @@ export class SwapTableDialogComponent implements OnInit {
   ngOnInit() {
     this.fromTable = this.data.fromTable;
     this.toTable = null;
-    document.getElementById('toTable').focus();
+  }
+
+  clickSubmit(): void {
+    document.getElementById('submitBtn').click();
   }
 
 }

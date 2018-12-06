@@ -80,7 +80,7 @@ export class InventoryComponent implements OnInit {
   }
 
   getAllCategories(): void  {
-    this.inventoryService.getAllNonFoodCategories()
+    this.inventoryService.getAllCategories()
       .subscribe(
         response => {
           this.noCategory = false;
@@ -95,7 +95,7 @@ export class InventoryComponent implements OnInit {
   }
 
   getAllProducts(): void  {
-    this.inventoryService.getAllNonFoodProducts()
+    this.inventoryService.getAllProducts()
       .subscribe(
         response => {
           this.noProduct = false;

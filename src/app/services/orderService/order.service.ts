@@ -10,8 +10,7 @@ import {OrderDetail} from '../../Model/OrderDetail';
 import {SalesReport} from '../../Model/SalesReport';
 import {ReportRequest} from '../../Model/ReportRequest';
 import {ModifyOrder} from '../../Model/ModifyOrder';
-import {OrderStart} from '../../model/OrderStart';
-import {RestaurantTable} from '../../model/RestaurantTable';
+import {AddOrderDetail} from '../../model/AddOrderDetail';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -50,6 +49,15 @@ export class OrderService {
       );
   }
 
+  saveOrder(order: Order): Observable<Order>  {
+    const url = `${this.orderURL}`;
+    return <Observable<Order>> this.http.put(url, order, httpOptions)
+      .pipe(
+        tap(orders => console.log(`Saved order`)),
+        // catchError(this.handleError('getAllOrders()', []))
+      );
+  }
+
   getOrderById(id: number): Observable<Order> {
     const url = `${this.orderURL}/id/${id}`;
     return <Observable<Order>> this.http.get(url)
@@ -68,11 +76,29 @@ export class OrderService {
       );
   }
 
-  getOrderDetailsById(id: number): Observable<OrderDetail[]> {
+  getOrderDetailsById(id: number): Observable<AddOrderDetail[]> {
     const url = `${this.orderURL}/id/${id}/details`;
-    return <Observable<OrderDetail[]>> this.http.get(url)
+    return <Observable<AddOrderDetail[]>> this.http.get(url)
       .pipe(
         tap(orders => console.log(`Fetched order details by id`)),
+        // catchError(this.handleError('getOrderDetailsById()', []))
+      );
+  }
+
+  saveOrderDetail(addOrderDetail: AddOrderDetail): Observable<AddOrderDetail> {
+    const url = `${this.orderURL}/detail`;
+    return <Observable<AddOrderDetail>> this.http.post(url, addOrderDetail, httpOptions)
+      .pipe(
+        tap(orderDetail => console.log(`Saved order detail`)),
+        // catchError(this.handleError('getOrderDetailsById()', []))
+      );
+  }
+
+  removeOrderDetail(orderDetailId: number): Observable<AddOrderDetail> {
+    const url = `${this.orderURL}/detail`;
+    return <Observable<AddOrderDetail>> this.http.delete(url, httpOptions)
+      .pipe(
+        tap(orderDetail => console.log(`Deleted order detail`)),
         // catchError(this.handleError('getOrderDetailsById()', []))
       );
   }
@@ -143,6 +169,15 @@ export class OrderService {
   printKOT(orderId: number): Observable<boolean> {
     const url = `${this.orderURL}/print/kot/${orderId}`;
     return <Observable<boolean>> this.http.get(url)
+      .pipe(
+        tap(KOTprinted => console.log(`KOT print attempted`)),
+        // catchError(this.handleError('printKOT()', []))
+      );
+  }
+
+  printCurrentKOT(orderId: number, orderDetails: OrderDetail[]): Observable<boolean> {
+    const url = `${this.orderURL}/print/kot/${orderId}`;
+    return <Observable<boolean>> this.http.post(url, orderDetails, httpOptions)
       .pipe(
         tap(KOTprinted => console.log(`KOT print attempted`)),
         // catchError(this.handleError('printKOT()', []))

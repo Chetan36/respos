@@ -23,6 +23,7 @@ import {FormsModule} from '@angular/forms';
 import { NewCategoryDialogComponent } from './components/new-category-dialog/new-category-dialog.component';
 import { NewProductDialogComponent } from './components/new-product-dialog/new-product-dialog.component';
 import { SwapTableDialogComponent } from './components/swap-table-dialog/swap-table-dialog.component';
+import { ExtraItemDialogComponent } from './components/extra-item-dialog/extra-item-dialog.component';
 
 @NgModule({
   declarations: [
@@ -42,6 +43,7 @@ import { SwapTableDialogComponent } from './components/swap-table-dialog/swap-ta
     NewCategoryDialogComponent,
     NewProductDialogComponent,
     SwapTableDialogComponent,
+    ExtraItemDialogComponent,
   ],
   imports: [
     BrowserModule,
