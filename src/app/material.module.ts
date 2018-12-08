@@ -9,14 +9,14 @@ import {
   MatSlideToggleModule, MatSnackBarModule, MatTableModule, MatTabsModule, MatToolbarModule, MatTooltipModule
 } from '@angular/material';
 import {NgModule} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {LayoutModule} from '@angular/cdk/layout';
 import {ConfirmationDialogComponent} from './components/confirmation-dialog/confirmation-dialog.component';
 import {NewCategoryDialogComponent} from './components/new-category-dialog/new-category-dialog.component';
 import {NewProductDialogComponent} from './components/new-product-dialog/new-product-dialog.component';
 import {SwapTableDialogComponent} from './components/swap-table-dialog/swap-table-dialog.component';
 import { PrintKotDialogComponent } from './components/print-kot-dialog/print-kot-dialog.component';
-import { ExtraItemDialogComponent } from './components/extra-item-dialog/extra-item-dialog.component';
+import {OrderDetailsDialogComponent} from './components/order-details-dialog/order-details-dialog.component';
+import {SettleOrderDialogComponent} from './components/settle-order-dialog/settle-order-dialog.component';
+import {CloseOrderDialogComponent} from './components/close-order-dialog/close-order-dialog.component';
 
 @NgModule({
   imports: [
@@ -73,7 +73,9 @@ import { ExtraItemDialogComponent } from './components/extra-item-dialog/extra-i
     NewProductDialogComponent,
     SwapTableDialogComponent,
     PrintKotDialogComponent,
-    ExtraItemDialogComponent
+    OrderDetailsDialogComponent,
+    SettleOrderDialogComponent,
+    CloseOrderDialogComponent
   ],
 })
 export class MaterialModule { }

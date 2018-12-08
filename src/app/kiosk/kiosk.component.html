@@ -34,10 +34,16 @@
             <button mat-stroked-button style="margin-right: 10px" (click)="swapTableClicked()">
               Swap Table
             </button>
-            <button mat-stroked-button style="margin-right: 10px" (click)="printKOT()">
+            <button mat-stroked-button style="margin-right: 10px" (click)="saveKOTClicked()">
               Save KOT
             </button>
-            <button mat-stroked-button style="margin-right: 10px">
+            <button mat-stroked-button style="margin-right: 10px" (click)="fillDetailsClicked()">
+              Fill Details
+            </button>
+            <button mat-stroked-button style="margin-right: 10px" (click)="printBill()">
+              Generate Bill
+            </button>
+            <button mat-stroked-button style="margin-right: 10px" (click)="settleClicked()">
               Settle
             </button>
             <button mat-stroked-button color="warn" style="margin-right: 10px" (click)="cancelOrder()">
@@ -96,10 +102,10 @@
         </div>
         <div class="col-md-4">
           <div class="pull-right">
-            <button mat-stroked-button (click)="submitOrderDetail()">
+            <button mat-stroked-button (click)="submitOrderDetail()" [disabled]="submitOrderDetailProcessing">
               <mat-icon>done</mat-icon>
             </button>
-            <button mat-stroked-button style="margin-left: 10px;" (click)="resetOrderDetail()">
+            <button mat-stroked-button style="margin-left: 10px;" (click)="resetOrderDetail()" [disabled]="submitOrderDetailProcessing">
               <mat-icon>refresh</mat-icon>
             </button>
           </div>

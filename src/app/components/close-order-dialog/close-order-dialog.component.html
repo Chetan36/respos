@@ -1,0 +1,5 @@
+<h2 mat-dialog-title *ngIf="order.cashBack === 0">Order settled successfully!</h2>
+<h2 mat-dialog-title *ngIf="order.cashBack !== 0">Please pay the customer Rs. {{ order.cashBack }} back.</h2>
+<mat-dialog-actions>
+  <button mat-button [mat-dialog-close]="true" id="submitBtn">Close Order</button>
+</mat-dialog-actions>

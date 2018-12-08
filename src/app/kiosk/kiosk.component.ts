@@ -12,8 +12,11 @@ import {ExtraItem} from '../model/ExtraItem';
 import {AddOrderDetail} from '../model/AddOrderDetail';
 import {Recipe} from '../model/Recipe';
 import {RestaurantService} from '../services/restaurantService/restaurant.service';
-import {ExtraItemDialogComponent} from '../components/extra-item-dialog/extra-item-dialog.component';
 import { PrintKotDialogComponent } from '../components/print-kot-dialog/print-kot-dialog.component';
+import {OrderDetailsDialogComponent} from '../components/order-details-dialog/order-details-dialog.component';
+import {SettleOrderDialogComponent} from '../components/settle-order-dialog/settle-order-dialog.component';
+import {CloseOrderDialogComponent} from '../components/close-order-dialog/close-order-dialog.component';
+import {ORDER_SETTLED} from '../Constants/OrderConstants';
 
 @Component({
   selector: 'app-kiosk',
@@ -35,6 +38,7 @@ export class KioskComponent implements OnInit {
   extraRecipeItems: Recipe[];
   extraItems: ExtraItem[];
   addOrderDetail: AddOrderDetail;
+  submitOrderDetailProcessing: boolean;
 
   constructor(
     private restaurantService: RestaurantService,
@@ -57,6 +61,7 @@ export class KioskComponent implements OnInit {
     this.orderDetails = [];
     this.currentOrderDetails = [];
     this.orderDetailDataSource = new MatTableDataSource<AddOrderDetail>(this.orderDetails);
+    this.submitOrderDetailProcessing = false;
   }
 
   openErrorSnackBar(message: string, action: string) {
@@ -157,7 +162,7 @@ export class KioskComponent implements OnInit {
           this.openSuccessSnackBar('Order cancelled successfully', 'Close');
         },
         error1 => {
-          this.openErrorSnackBar('Could not cancel the order', 'Close');
+          this.openErrorSnackBar(error1.error.message, 'Close');
         }
       );
   }
@@ -279,19 +284,8 @@ export class KioskComponent implements OnInit {
       );
   }
 
-  toggleExtraItemsDialog() {
-    const dialogRef = this.dialog.open(ExtraItemDialogComponent, {
-      width: '550px',
-      data: { extraItems: this.extraItems }
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.swapOrderTable(this.activeTable.tableNumber, result);
-      }
-    });
-  }
-
   submitOrderDetail(): void {
+    this.submitOrderDetailProcessing = true;
     console.log(this.addOrderDetail);
     this.orderService.saveOrderDetail(this.addOrderDetail)
       .subscribe(
@@ -301,10 +295,12 @@ export class KioskComponent implements OnInit {
           this.currentOrderDetails.push(response);
           this.orderDetailDataSource = new MatTableDataSource<AddOrderDetail>(this.orderDetails);
           this.resetOrderDetail();
+          this.submitOrderDetailProcessing = false;
         },
         error1 => {
           this.openErrorSnackBar(error1.error.message, 'Close');
           this.resetOrderDetail();
+          this.submitOrderDetailProcessing = false;
         }
       );
   }
@@ -348,7 +344,7 @@ export class KioskComponent implements OnInit {
             error1 => {
               this.openErrorSnackBar(error1.error.message, 'Close');
             }
-          )
+          );
       }
     });
   }
@@ -391,6 +387,109 @@ export class KioskComponent implements OnInit {
           }
         );
     }
+  }
+
+  fillDetailsClicked(): void  {
+    this.toggleOrderDetailsDialog();
+  }
+
+  toggleOrderDetailsDialog(): void  {
+    const dialogRef = this.dialog.open(OrderDetailsDialogComponent, {
+      width: '550px',
+      data: { order: this.activeOrder }
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.orderService.saveOrder(result)
+          .subscribe(
+            response => {
+              if (response) {
+                this.activeOrder = response;
+                this.openSuccessSnackBar('Details updated successfully', 'Close');
+              }
+            },
+            error1 => {
+              this.openErrorSnackBar(error1.error.message, 'Close');
+            }
+          );
+      }
+    });
+  }
+
+  printBill(): void {
+    if (this.activeOrder.totalPrice === 0) {
+      this.openErrorSnackBar('Please fill in the details first.', 'Close');
+      return;
+    }
+    this.orderService.printBill(this.activeOrder.id)
+      .subscribe(
+        response => {
+          if (response === true) {
+            this.openSuccessSnackBar('Bill printed successfully', 'Close');
+          } else {
+            this.openErrorSnackBar('Could not print bill', 'Close');
+          }
+        },
+        error1 => {
+          this.openErrorSnackBar(error1.error.message, 'Close');
+        }
+      );
+  }
+
+  settleClicked(): void {
+    this.toggleSettlementDialog();
+  }
+
+  toggleSettlementDialog(): void  {
+    const dialogRef = this.dialog.open(SettleOrderDialogComponent, {
+      width: '550px',
+      data: { netAmount: this.activeOrder.netPrice }
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        if (result < this.activeOrder.netPrice)  {
+          this.openErrorSnackBar('Amount paid cannot be less than the total amount', 'Close');
+          return;
+        }
+        this.activeOrder.amountPaid = result;
+        this.activeOrder.settled = true;
+        this.activeOrder.orderStatus = ORDER_SETTLED;
+        this.orderService.saveOrder(this.activeOrder)
+          .subscribe(
+            response => {
+              if (response) {
+                this.activeOrder = response;
+                this.toggleCloseOrderDialog();
+              }
+            },
+            error1 => {
+              this.openErrorSnackBar(error1.error.message, 'Close');
+            }
+          );
+      }
+    });
+  }
+
+  toggleCloseOrderDialog(): void  {
+    const dialogRef = this.dialog.open(CloseOrderDialogComponent, {
+      width: '550px',
+      data: { order: this.activeOrder }
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.activeOrder = null;
+        this.restaurantService.freeTable(this.activeTable.tableNumber)
+          .subscribe(
+            response => {
+              this.activeTable = response;
+              this.restaurantTables[this.restaurantTables.findIndex(x => x.tableNumber === this.activeTable.tableNumber)] = response;
+            },
+            error1 => {
+              this.openErrorSnackBar(error1.error.message, 'Close');
+            }
+          );
+      }
+    });
   }
 
 }

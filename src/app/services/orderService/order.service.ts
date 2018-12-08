@@ -95,7 +95,7 @@ export class OrderService {
   }
 
   removeOrderDetail(orderDetailId: number): Observable<AddOrderDetail> {
-    const url = `${this.orderURL}/detail`;
+    const url = `${this.orderURL}/detail/${orderDetailId}`;
     return <Observable<AddOrderDetail>> this.http.delete(url, httpOptions)
       .pipe(
         tap(orderDetail => console.log(`Deleted order detail`)),

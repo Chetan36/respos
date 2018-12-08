@@ -42,6 +42,15 @@ export class RestaurantService {
       );
   }
 
+  freeTable(tableNumber: number): Observable<RestaurantTable> {
+    const url = `${this.restaurantURL}/table/free/${tableNumber}`;
+    return <Observable<RestaurantTable>> this.http.get(url)
+      .pipe(
+        tap(table => console.log(`Freed table`)),
+        // catchError(this.handleError('getOrderDetailsById()', []))
+      );
+  }
+
   swapTable(fromTable: number, toTable: number): Observable<RestaurantTable>  {
     const url = `${this.restaurantURL}/table/swap/${fromTable}/${toTable}`;
     return <Observable<RestaurantTable>> this.http.get(url)
