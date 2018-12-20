@@ -346,7 +346,7 @@ export class KioskComponent implements OnInit {
             }
           );
       }
-    });   
+    });
   }
 
   printKOT(): void  {
