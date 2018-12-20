@@ -342,7 +342,7 @@ export class KioskComponent implements OnInit {
               this.printKOT();
             },
             error1 => {
-              this.openErrorSnackBar(error1.error.message, 'Close');
+              this.openErrorSnackBar(error1.error.message, 'Close');    
             }
           );
       }
